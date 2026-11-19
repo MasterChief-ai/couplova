@@ -1,0 +1,6 @@
+{
+  "name": "Couply",
+  "description": "Offline-first pass-and-play card game app for couples with editorial story decks, privacy handoff, and session telemetry.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
