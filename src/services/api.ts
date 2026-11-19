@@ -1,4 +1,12 @@
 import type { ActiveDeckThemeId, GenderTheme } from '../constants/theme';
+
+export const API_BASE_URL = 'https://couplova.onrender.com';
+
+function resolveApiUrl(path: string): string {
+  if (/^https?:\/\//i.test(path)) return path;
+  return `${API_BASE_URL}${path.startsWith('/') ? path : `/${path}`}`;
+}
+
 import {
   clearAdminSession,
   clearAuthSession,
@@ -56,7 +64,7 @@ async function refreshAccessToken(): Promise<string | null> {
     const refreshToken = getStoredRefreshToken();
     if (!refreshToken) return null;
 
-    const res = await fetch('/api/auth/refresh', {
+    const res = await fetch(resolveApiUrl('/api/auth/refresh'), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ refreshToken }),
@@ -116,7 +124,7 @@ async function apiFetch<T>(
   }, 3000);
 
   try {
-    const response = await fetch(path, { ...rest, headers: reqHeaders });
+    const response = await fetch(resolveApiUrl(path), { ...rest, headers: reqHeaders });
 
     if (response.status === 401 && auth && retry) {
       const nextToken = await refreshAccessToken();
@@ -441,7 +449,7 @@ async function adminFetch<T>(path: string, options: RequestInit = {}): Promise<T
   if (token) {
     headers.set('Authorization', `Bearer ${token}`);
   }
-  const response = await fetch(path, { ...options, headers });
+  const response = await fetch(resolveApiUrl(path), { ...options, headers });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
     if (response.status === 401) {
